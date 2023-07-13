@@ -35,7 +35,7 @@ class SurveyService
 
     public function deleteSurvey(UuidInterface $id): void
     {
-        $survey = $this->surveyWriteRepository->find($id);
+        $survey = $this->surveyRepository->find($id);
         $this->surveyWriteRepository->remove($survey, true);
     }
 

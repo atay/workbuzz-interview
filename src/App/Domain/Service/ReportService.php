@@ -4,7 +4,7 @@ namespace App\Domain\Service;
 
 use App\Domain\Command\SendReportCommand;
 use App\Domain\Model\Survey\Report;
-use App\Infrastructure\Framework\Symfony\Repository\ReportRepository;
+use App\Infrastructure\Framework\Symfony\Repository\ReportWriteRepository;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -13,7 +13,7 @@ class ReportService
 {
 
     public function __construct(
-        private ReportRepository $reportRepository,
+        private ReportWriteRepository $reportWriteRepository,
         private SurveyService $surveyService,
         private MessageBusInterface $messageBus,
     ) {
@@ -21,7 +21,6 @@ class ReportService
     public function generate(UuidInterface $id): Report
     {
         $survey = $this->surveyService->find($id);
-
 
         $sum = 0;
         $counter = 0;
@@ -43,8 +42,7 @@ class ReportService
         $report->setQuality($counter > 0 ? (int) ($sum / $counter) : 0);
         $report->setComments($comments);
 
-
-        $this->reportRepository->save($report, true);
+        $this->reportWriteRepository->save($report, true);
 
         $this->messageBus->dispatch(
             new SendReportCommand($report->getId()),
