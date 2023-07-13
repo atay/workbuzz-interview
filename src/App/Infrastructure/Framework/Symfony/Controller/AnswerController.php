@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\Framework\Symfony\Controller;
 
 use App\Domain\Command\AddAnswerCommand;
+use App\Domain\Security\Voter\SurveyVoter;
 use App\Domain\Service\AnswerService;
 use App\Domain\Service\SurveyService;
 use App\Infrastructure\Framework\Symfony\Form\AnswerType;
-use App\Infrastructure\Framework\Symfony\Security\Voter\SurveyVoter;
 use App\Domain\Model\Survey\Answer;
 use App\Domain\Model\Survey\Survey;
 use Ramsey\Uuid\Uuid;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

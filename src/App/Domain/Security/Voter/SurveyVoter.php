@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Framework\Symfony\Security\Voter;
+namespace App\Domain\Security\Voter;
 
 use App\Domain\Model\Survey\Survey;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
