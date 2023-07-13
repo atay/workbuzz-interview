@@ -1,0 +1,7 @@
+POST http://localhost/survey
+Content-Type: application/json
+
+{
+    "name": "My Survey2",
+    "reportEmail": "zupa@zupa.com"
+}

@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Framework\Symfony\Repository;
 
 use App\Domain\Model\Survey\Survey;
+use App\Domain\Repository\SurveyRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends ServiceEntityRepository
+class SurveyRepository extends ServiceEntityRepository implements SurveyRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

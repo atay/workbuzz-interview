@@ -20,8 +20,16 @@ services:
             - '../src/App/DependencyInjection/'
             - '../src/App/Infrastructure/Persistence/Doctrine/Entity/'
             - '../src/App/Kernel.php'
+            - '../src/App/Infrastructure/Framework/Symfony/Exception'
+            - '../src/App/Domain/Command'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Application\CommandHandler\CreateSurveyHandler:
+    App\Application\CommandHandler\:
+        resource: '../src/App/Application/CommandHandler'
         tags: ['messenger.message_handler']
+
+    App\Application\QueryHandler\:
+        resource: '../src/App/Application/QueryHandler'
+        tags: ['messenger.message_handler']
+
