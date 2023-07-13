@@ -41,8 +41,11 @@ final class AnswerController extends AbstractController
             return $this->json($form);
         }
 
-
-        $this->denyAccessUnlessGranted(SurveyVoter::ANSWER, $survey);
+        try {
+            $this->denyAccessUnlessGranted(SurveyVoter::ANSWER, $survey);
+        } catch (\Throwable $th) {
+            return $this->json(['error' => $th->getMessage()], 403);
+        }
 
         $this->messageBus->dispatch(
             new AddAnswerCommand(
