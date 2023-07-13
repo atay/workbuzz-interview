@@ -4,6 +4,7 @@ namespace App\Domain\Service;
 
 use App\Domain\Command\SendReportCommand;
 use App\Domain\Model\Survey\Report;
+use App\Infrastructure\Framework\Symfony\Repository\ReportRepository;
 use App\Infrastructure\Framework\Symfony\Repository\ReportWriteRepository;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -14,6 +15,7 @@ class ReportService
 
     public function __construct(
         private ReportWriteRepository $reportWriteRepository,
+        private ReportRepository $reportRepository,
         private SurveyService $surveyService,
         private MessageBusInterface $messageBus,
     ) {
@@ -49,5 +51,10 @@ class ReportService
         );
 
         return $report;
+    }
+
+    public function find(UuidInterface $id): ?Report
+    {
+        return $this->reportRepository->find($id);
     }
 }
