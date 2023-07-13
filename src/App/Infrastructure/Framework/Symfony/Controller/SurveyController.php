@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Framework\Symfony\Controller;
 
+use App\Application\DTO\SurveyDto;
+use App\Domain\Command\CreateSurveyCommand;
+use App\Domain\Service\SurveyService;
 use App\Infrastructure\Framework\Symfony\Form\StatusType;
 use App\Infrastructure\Framework\Symfony\Form\SurveyType;
 use App\Infrastructure\Framework\Symfony\Security\Voter\SurveyVoter;
-use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
+use App\Domain\Model\Survey\Survey;
 use App\Service\ReportGenerator;
 use App\Service\ReportMailer;
 use Ramsey\Uuid\Uuid;
@@ -15,6 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/survey')]
@@ -23,6 +27,7 @@ class SurveyController extends AbstractController
     public function __construct(
         private readonly ReportGenerator $reportGenerator,
         private readonly ReportMailer $reportMailer,
+        private MessageBusInterface $messageBus,
     ) {
     }
 
@@ -37,9 +42,26 @@ class SurveyController extends AbstractController
     {
         $survey = new Survey();
         $survey->setId(Uuid::uuid4());
-        $survey->setStatus(Survey::STATUS_NEW);
 
-        return $this->handleRequest($survey, $request);
+        $form = $this->createForm(SurveyType::class, $survey);
+        $form->submit(json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR));
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->json($form);
+        }
+
+        $this->messageBus->dispatch(
+            new CreateSurveyCommand(
+                $survey->getId()->__toString(),
+                $survey->getName(),
+                $survey->getReportEmail(),
+            )
+        );
+
+        return $this->json(SurveyDto::fromSurvey($survey));
+
+
+
     }
 
     #[Route('/{id}', methods: 'PUT')]
@@ -63,16 +85,8 @@ class SurveyController extends AbstractController
 
     private function handleRequest(Survey $survey, Request $request): JsonResponse
     {
-        $form = $this->createForm(SurveyType::class, $survey);
-        $form->submit(json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR));
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getRepository(Survey::class)->save($survey, true);
-        } else {
-            return $this->json($form);
-        }
 
-        return $this->json($survey);
     }
 
     #[Route('/{id}/status', methods: 'PUT')]

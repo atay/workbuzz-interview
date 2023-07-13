@@ -13,7 +13,7 @@ doctrine:
             App:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/App/Infrastructure/Persistence/Doctrine/Entity'
-                prefix: 'App\Infrastructure\Persistence\Doctrine\Entity'
+                prefix: 'App\Domain\Model\Survey'
                 alias: App
 
 when@test:

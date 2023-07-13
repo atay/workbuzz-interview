@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Framework\Symfony\Controller;
 
-use App\Infrastructure\Persistence\Doctrine\Entity\Report;
+use App\Domain\Model\Survey\Report;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

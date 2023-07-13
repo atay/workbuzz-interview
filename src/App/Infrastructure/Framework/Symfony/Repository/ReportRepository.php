@@ -2,7 +2,8 @@
 
 namespace App\Infrastructure\Framework\Symfony\Repository;
 
-use App\Infrastructure\Persistence\Doctrine\Entity\Report;
+
+use App\Domain\Model\Survey\Report;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

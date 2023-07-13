@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Infrastructure\Persistence\Doctrine\Entity\Report;
+use App\Domain\Model\Survey\Report;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 

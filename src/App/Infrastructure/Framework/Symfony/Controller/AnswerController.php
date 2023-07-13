@@ -6,8 +6,8 @@ namespace App\Infrastructure\Framework\Symfony\Controller;
 
 use App\Infrastructure\Framework\Symfony\Form\AnswerType;
 use App\Infrastructure\Framework\Symfony\Security\Voter\SurveyVoter;
-use App\Infrastructure\Persistence\Doctrine\Entity\Answer;
-use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
+use App\Domain\Model\Survey\Answer;
+use App\Domain\Model\Survey\Survey;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

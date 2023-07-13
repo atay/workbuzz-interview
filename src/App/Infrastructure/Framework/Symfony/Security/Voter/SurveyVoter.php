@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Framework\Symfony\Security\Voter;
 
-use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
+use App\Domain\Model\Survey\Survey;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 

@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Framework\Symfony\Form;
 
-use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
+use App\Domain\Model\Survey\Survey;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

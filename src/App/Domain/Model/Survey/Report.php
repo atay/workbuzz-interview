@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Persistence\Doctrine\Entity;
+namespace App\Domain\Model\Survey;
 
 use App\Infrastructure\Framework\Symfony\Repository\ReportRepository;
 use Doctrine\DBAL\Types\Types;
