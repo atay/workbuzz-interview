@@ -2,6 +2,6 @@ PUT http://localhost/survey/f3b5a405-f98a-467c-bfc7-6c1e084cce25
 Content-Type: application/json
 
 {
-    "name": "My Survey1",
+    "name": "My Survey5",
     "reportEmail": "zupa@zupa.com"
 }

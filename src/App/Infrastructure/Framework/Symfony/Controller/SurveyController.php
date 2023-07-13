@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Infrastructure\Framework\Symfony\Controller;
 
 use App\Application\DTO\SurveyDto;
+use App\Domain\Command\DeleteSurveyCommand;
 use App\Domain\Command\SaveSurveyCommand;
 use App\Domain\Model\Survey\Survey;
 use App\Domain\Query\GetAllSurveysQuery;
+use App\Domain\Service\SurveyService;
 use App\Infrastructure\Framework\Symfony\Exception\WrongInputException;
 use App\Infrastructure\Framework\Symfony\Form\StatusType;
 use App\Infrastructure\Framework\Symfony\Form\SurveyType;
@@ -31,6 +33,7 @@ class SurveyController extends AbstractController
         private readonly ReportGenerator $reportGenerator,
         private readonly ReportMailer $reportMailer,
         private MessageBusInterface $messageBus,
+        private SurveyService $surveyService,
     ) {
     }
 
@@ -100,21 +103,32 @@ class SurveyController extends AbstractController
     }
 
     #[Route('/{id}', methods: 'PUT')]
-    #[ParamConverter('survey', Survey::class)]
-    public function edit(Survey $survey, Request $request): JsonResponse
+    public function edit(Request $request): JsonResponse
     {
+
+        $survey = $this->surveyService->find(Uuid::fromString($request->get('id')));
+        if ($survey === null) {
+            return $this->json(['error' => 'Survey not found'], 404);
+        }
         $this->denyAccessUnlessGranted(SurveyVoter::EDIT, $survey);
 
-        $this->createOrUpdate($request);
+        return $this->createOrUpdate($request);
     }
 
     #[Route('/{id}', methods: 'DELETE')]
-    #[ParamConverter('survey', Survey::class)]
-    public function delete(Survey $survey): JsonResponse
+    public function delete(Request $request): JsonResponse
     {
+        $survey = $this->surveyService->find(Uuid::fromString($request->get('id')));
+        if ($survey === null) {
+            return $this->json(['error' => 'Survey not found'], 404);
+        }
+
         $this->denyAccessUnlessGranted(SurveyVoter::DELETE, $survey);
 
-        $this->getDoctrine()->getRepository(Survey::class)->remove($survey, true);
+        $this->messageBus->dispatch(
+            new DeleteSurveyCommand($survey->getId()),
+        );
+
         return $this->json([]);
     }
 
