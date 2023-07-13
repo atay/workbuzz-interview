@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Framework\Symfony\Controller;
 
+use App\Application\DTO\SurveyDto;
 use App\Domain\Command\AddAnswerCommand;
 use App\Domain\Security\Voter\SurveyVoter;
 use App\Domain\Service\AnswerService;
@@ -55,6 +56,6 @@ final class AnswerController extends AbstractController
             )
         );
 
-        return $this->json($survey);
+        return $this->json(SurveyDto::fromSurvey($survey));
     }
 }

@@ -152,6 +152,6 @@ class SurveyController extends AbstractController
             new ChangeSurveyStatusCommand($survey->getId(), $status),
         );
 
-        return $this->json($survey);
+        return $this->json(SurveyDto::fromSurvey($survey));
     }
 }
