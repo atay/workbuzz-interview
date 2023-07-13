@@ -1,7 +1,2 @@
-PUT http://localhost/survey/f3b5a405-f98a-467c-bfc7-6c1e084cce25
+DELETE http://localhost/survey/7da99984-4457-4219-8cc1-36e3e637932e
 Content-Type: application/json
-
-{
-    "name": "My Survey5",
-    "reportEmail": "zupa@zupa.com"
-}

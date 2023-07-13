@@ -1,2 +1,2 @@
-GET http://localhost/survey
+GET http://localhost/report/56360754-3435-4546-af2a-9591245c7faf
 Content-Type: application/json

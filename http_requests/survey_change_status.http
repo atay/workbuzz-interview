@@ -1,0 +1,6 @@
+PUT http://localhost/survey/ace66d80-af21-4b50-b377-e7cbbf0c95a0/status
+Content-Type: application/json
+
+{
+    "status": "live"
+}
