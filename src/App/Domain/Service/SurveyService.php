@@ -55,7 +55,7 @@ class SurveyService
 
         if ($status === Survey::STATUS_CLOSED) {
             $this->messageBus->dispatch(
-                new GenerateReportCommand($survey->getId()),
+                new GenerateReportCommand($id),
             );
         }
 
