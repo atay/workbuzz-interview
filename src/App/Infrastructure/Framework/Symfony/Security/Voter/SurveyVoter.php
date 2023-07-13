@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Security\Voter;
+namespace App\Infrastructure\Framework\Symfony\Security\Voter;
 
-use App\Entity\Survey;
+use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 

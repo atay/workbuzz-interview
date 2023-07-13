@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Infrastructure\Persistence\Doctrine\Entity;
 
-use App\Repository\SurveyRepository;
+
+use App\Infrastructure\Framework\Symfony\Repository\SurveyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

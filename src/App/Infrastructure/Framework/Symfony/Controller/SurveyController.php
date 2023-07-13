@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Infrastructure\Framework\Symfony\Controller;
 
-use App\Entity\Survey;
-use App\Form\StatusType;
-use App\Form\SurveyType;
-use App\Security\Voter\SurveyVoter;
+use App\Infrastructure\Framework\Symfony\Form\StatusType;
+use App\Infrastructure\Framework\Symfony\Form\SurveyType;
+use App\Infrastructure\Framework\Symfony\Security\Voter\SurveyVoter;
+use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
 use App\Service\ReportGenerator;
 use App\Service\ReportMailer;
 use Ramsey\Uuid\Uuid;

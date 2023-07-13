@@ -18,7 +18,7 @@ services:
         resource: '../src/App'
         exclude:
             - '../src/App/DependencyInjection/'
-            - '../src/App/Entity/'
+            - '../src/App/Infrastructure/Persistence/Doctrine/Entity/'
             - '../src/App/Kernel.php'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

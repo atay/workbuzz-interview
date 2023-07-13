@@ -1,26 +1,27 @@
 <?php
 
-namespace App\Form;
+namespace App\Infrastructure\Framework\Symfony\Form;
 
-use App\Entity\Answer;
+use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AnswerType extends AbstractType
+class StatusType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $validStatuses = [Survey::STATUS_NEW, Survey::STATUS_LIVE, Survey::STATUS_CLOSED];
+
         $builder
-            ->add('quality')
-            ->add('comment')
+            ->add('status', ChoiceType::class, ['choices' => array_combine($validStatuses, $validStatuses)])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Answer::class,
             'allow_extra_fields' => true,
             'csrf_protection' => false,
         ]);

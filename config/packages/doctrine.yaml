@@ -12,8 +12,8 @@ doctrine:
         mappings:
             App:
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/App/Entity'
-                prefix: 'App\Entity'
+                dir: '%kernel.project_dir%/src/App/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Infrastructure\Persistence\Doctrine\Entity'
                 alias: App
 
 when@test:

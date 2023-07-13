@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Report;
-use App\Entity\Survey;
+use App\Infrastructure\Persistence\Doctrine\Entity\Report;
+use App\Infrastructure\Persistence\Doctrine\Entity\Survey;
 use Doctrine\Persistence\ManagerRegistry;
 use Ramsey\Uuid\Uuid;
 
