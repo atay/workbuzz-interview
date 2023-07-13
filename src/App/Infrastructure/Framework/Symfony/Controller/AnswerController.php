@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Framework\Symfony\Controller;
 
+use App\Domain\Command\AddAnswerCommand;
+use App\Domain\Service\AnswerService;
+use App\Domain\Service\SurveyService;
 use App\Infrastructure\Framework\Symfony\Form\AnswerType;
 use App\Infrastructure\Framework\Symfony\Security\Voter\SurveyVoter;
 use App\Domain\Model\Survey\Answer;
@@ -13,28 +16,42 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class AnswerController extends AbstractController
 {
-    #[Route('/survey/{id}/answer', methods: 'POST')]
-    #[ParamConverter('survey', Survey::class)]
-    public function create(Survey $survey, Request $request): JsonResponse
-    {
-        $this->denyAccessUnlessGranted(SurveyVoter::ANSWER, $survey);
 
+    public function __construct(
+        private AnswerService $answerService,
+        private SurveyService $surveyService,
+        private MessageBusInterface $messageBus,
+    ) {
+    }
+
+    #[Route('/survey/{id}/answer', methods: 'POST')]
+    public function create(Request $request): JsonResponse
+    {
+        $survey = $this->surveyService->find(Uuid::fromString($request->get('id')));
         $answer = new Answer();
-        $answer->setId(Uuid::uuid4());
 
         $form = $this->createForm(AnswerType::class, $answer);
         $form->submit(json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR));
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $survey->addAnswer($answer);
-            $this->getDoctrine()->getRepository(Survey::class)->save($survey, true);
-        } else {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->json($form);
         }
+
+
+        $this->denyAccessUnlessGranted(SurveyVoter::ANSWER, $survey);
+
+        $this->messageBus->dispatch(
+            new AddAnswerCommand(
+                $survey->getId(),
+                $form->getData()->getQuality(),
+                $form->getData()->getComment(),
+            )
+        );
 
         return $this->json($survey);
     }

@@ -4,8 +4,6 @@ namespace App\Domain\Service;
 
 use App\Domain\Command\SendReportCommand;
 use App\Domain\Model\Survey\Report;
-use App\Domain\Model\Survey\Survey;
-
 use App\Infrastructure\Framework\Symfony\Repository\ReportRepository;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -48,9 +46,9 @@ class ReportService
 
         $this->reportRepository->save($report, true);
 
-        // $this->messageBus->dispatch(
-        //     new SendReportCommand($report->getId()),
-        // );
+        $this->messageBus->dispatch(
+            new SendReportCommand($report->getId()),
+        );
 
         return $report;
     }

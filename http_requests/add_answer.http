@@ -1,0 +1,7 @@
+POST http://localhost/survey/10a5d57f-aa58-4719-93cf-52ed3bc1e0e1/answer
+Content-Type: application/json
+
+{
+    "quality": "2",
+    "comment": "zupa za slona"
+}
