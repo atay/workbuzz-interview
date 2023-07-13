@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Domain\Service;
 
 use App\Domain\Model\Survey\Report;
 use Symfony\Component\Mailer\MailerInterface;

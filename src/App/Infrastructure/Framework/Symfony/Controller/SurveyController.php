@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Framework\Symfony\Controller;
 
 use App\Application\DTO\SurveyDto;
+use App\Domain\Command\ChangeSurveyStatusCommand;
 use App\Domain\Command\DeleteSurveyCommand;
 use App\Domain\Command\SaveSurveyCommand;
 use App\Domain\Model\Survey\Survey;
@@ -14,10 +15,7 @@ use App\Infrastructure\Framework\Symfony\Exception\WrongInputException;
 use App\Infrastructure\Framework\Symfony\Form\StatusType;
 use App\Infrastructure\Framework\Symfony\Form\SurveyType;
 use App\Infrastructure\Framework\Symfony\Security\Voter\SurveyVoter;
-use App\Service\ReportGenerator;
-use App\Service\ReportMailer;
 use Ramsey\Uuid\Uuid;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,8 +28,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class SurveyController extends AbstractController
 {
     public function __construct(
-        private readonly ReportGenerator $reportGenerator,
-        private readonly ReportMailer $reportMailer,
         private MessageBusInterface $messageBus,
         private SurveyService $surveyService,
     ) {
@@ -132,25 +128,29 @@ class SurveyController extends AbstractController
         return $this->json([]);
     }
 
+
+
     #[Route('/{id}/status', methods: 'PUT')]
-    #[ParamConverter('survey', Survey::class)]
-    public function changeStatus(Survey $survey, Request $request): JsonResponse
+    public function changeStatus(Request $request): JsonResponse
     {
+        $survey = $this->surveyService->find(Uuid::fromString($request->get('id')));
+        if ($survey === null) {
+            return $this->json(['error' => 'Survey not found'], 404);
+        }
+
         $form = $this->createForm(StatusType::class);
         $form->submit(json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR));
-        if ($form->isSubmitted() && $form->isValid()) {
-            $survey->setStatus($form->getData()['status']);
-
-
-            if ($survey->getStatus() === Survey::STATUS_CLOSED) {
-                $report = $this->reportGenerator->generate($survey);
-                $this->reportMailer->send($report);
-            }
-
-            $this->getDoctrine()->getRepository(Survey::class)->save($survey, true);
-        } else {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->json($form);
         }
+
+        $status = $form->getData()['status'];
+        if ($status === $survey->getStatus()) {
+            return $this->json(['error' => 'Status is already set to ' . $status], 400);
+        }
+        $this->messageBus->dispatch(
+            new ChangeSurveyStatusCommand($survey->getId(), $status),
+        );
 
         return $this->json($survey);
     }

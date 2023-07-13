@@ -1,0 +1,6 @@
+PUT http://localhost/survey/10a5d57f-aa58-4719-93cf-52ed3bc1e0e1/status
+Content-Type: application/json
+
+{
+    "status": "closed"
+}
