@@ -8,6 +8,7 @@ use App\Application\DTO\SurveyDto;
 use App\Domain\Command\ChangeSurveyStatusCommand;
 use App\Domain\Command\DeleteSurveyCommand;
 use App\Domain\Command\SaveSurveyCommand;
+use App\Domain\Exception\SurveyClosedException;
 use App\Domain\Model\Survey\Survey;
 use App\Domain\Query\GetAllSurveysQuery;
 use App\Domain\Security\Voter\SurveyVoter;
@@ -20,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Annotation\Route;
@@ -152,12 +154,16 @@ class SurveyController extends AbstractController
         }
 
         $status = $form->getData()['status'];
-        if ($status === $survey->getStatus()) {
-            return $this->json(['error' => 'Status is already set to ' . $status], 400);
+        try {
+            $this->messageBus->dispatch(
+                new ChangeSurveyStatusCommand($survey->getId(), $status),
+            );
+        } catch (HandlerFailedException $e) {
+            $previousException = $e->getPrevious();
+            if ($previousException instanceof \DomainException) {
+                return $this->json(['error' => $previousException->getMessage()], 400);
+            }
         }
-        $this->messageBus->dispatch(
-            new ChangeSurveyStatusCommand($survey->getId(), $status),
-        );
 
         return $this->json(SurveyDto::fromSurvey($survey));
     }

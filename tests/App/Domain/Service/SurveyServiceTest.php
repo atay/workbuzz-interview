@@ -3,6 +3,9 @@
 namespace App\Tests\Domain\Service;
 
 use App\Domain\Command\GenerateReportCommand;
+use App\Domain\Exception\SurveyAlreadyLiveException;
+use App\Domain\Exception\SurveyClosedException;
+use App\Domain\Exception\SurveySameStatusException;
 use App\Domain\Model\Survey\Survey;
 use App\Domain\Repository\SurveyWriteRepositoryInterface;
 use App\Domain\Service\SurveyService;
@@ -87,13 +90,13 @@ class SurveyServiceTest extends TestCase
         $this->assertInstanceOf(Survey::class, $survey);
     }
 
-    public function testChangeStatus(): void
+    public function testChangeStatusCloseCorrect(): void
     {
         $id = Uuid::uuid4();
         $status = Survey::STATUS_CLOSED;
 
         $survey = new Survey();
-        $survey->setStatus(Survey::STATUS_NEW);
+        $survey->setStatus(Survey::STATUS_LIVE);
 
         $this->surveyRepository->expects($this->once())
             ->method('find')
@@ -115,6 +118,79 @@ class SurveyServiceTest extends TestCase
         $this->assertEquals($status, $result->getStatus());
     }
 
+    public function testChangeStatusLiveCorrect(): void
+    {
+        $id = Uuid::uuid4();
+        $status = Survey::STATUS_LIVE;
+
+        $survey = new Survey();
+        $survey->setStatus(Survey::STATUS_NEW);
+
+        $this->surveyRepository->expects($this->once())
+            ->method('find')
+            ->with($id)
+            ->willReturn($survey);
+
+        $this->surveyWriteRepository->expects($this->once())
+            ->method('save')
+            ->with($survey, true);
+
+        $result = $this->surveyService->changeStatus($id, $status);
+
+        $this->assertInstanceOf(Survey::class, $result);
+        $this->assertEquals($status, $result->getStatus());
+    }
+
+    public function testChangeStatusLiveToNewException(): void
+    {
+        $id = Uuid::uuid4();
+        $status = Survey::STATUS_NEW;
+
+        $survey = new Survey();
+        $survey->setStatus(Survey::STATUS_LIVE);
+
+        $this->surveyRepository->expects($this->once())
+            ->method('find')
+            ->with($id)
+            ->willReturn($survey);
+
+        $this->expectException(SurveyAlreadyLiveException::class);
+        $this->surveyService->changeStatus($id, $status);
+    }
+
+    public function testChangeStatusSameStatusException(): void
+    {
+        $id = Uuid::uuid4();
+        $status = Survey::STATUS_LIVE;
+
+        $survey = new Survey();
+        $survey->setStatus(Survey::STATUS_LIVE);
+
+        $this->surveyRepository->expects($this->once())
+            ->method('find')
+            ->with($id)
+            ->willReturn($survey);
+
+        $this->expectException(SurveySameStatusException::class);
+        $this->surveyService->changeStatus($id, $status);
+    }
+
+    public function testChangeStatusChangeClosedException(): void
+    {
+        $id = Uuid::uuid4();
+        $status = Survey::STATUS_LIVE;
+
+        $survey = new Survey();
+        $survey->setStatus(Survey::STATUS_CLOSED);
+
+        $this->surveyRepository->expects($this->once())
+            ->method('find')
+            ->with($id)
+            ->willReturn($survey);
+
+        $this->expectException(SurveyClosedException::class);
+        $this->surveyService->changeStatus($id, $status);
+    }
 
 
 }

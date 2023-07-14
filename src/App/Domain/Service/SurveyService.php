@@ -3,6 +3,9 @@
 namespace App\Domain\Service;
 
 use App\Domain\Command\GenerateReportCommand;
+use App\Domain\Exception\SurveyAlreadyLiveException;
+use App\Domain\Exception\SurveyClosedException;
+use App\Domain\Exception\SurveySameStatusException;
 use App\Domain\Model\Survey\Survey;
 use App\Domain\Repository\SurveyRepositoryInterface;
 use App\Domain\Repository\SurveyWriteRepositoryInterface;
@@ -44,16 +47,26 @@ class SurveyService
         return $this->surveyRepository->find($id);
     }
 
-    public function changeStatus(UuidInterface $id, string $status): Survey
+    public function changeStatus(UuidInterface $id, string $newStatus): Survey
     {
         $survey = $this->surveyRepository->find($id);
-        if ($survey->getStatus() === $status) {
-            return $survey;
+        $status = $survey->getStatus();
+        if ($status === $newStatus) {
+            throw new SurveySameStatusException();
         }
-        $survey->setStatus($status);
+        if ($status === Survey::STATUS_CLOSED) {
+            throw new SurveyClosedException();
+        }
+        if (
+            $status === Survey::STATUS_LIVE
+            && $newStatus === Survey::STATUS_NEW
+        ) {
+            throw new SurveyAlreadyLiveException();
+        }
+        $survey->setStatus($newStatus);
         $this->surveyWriteRepository->save($survey, true);
 
-        if ($status === Survey::STATUS_CLOSED) {
+        if ($newStatus === Survey::STATUS_CLOSED) {
             $this->messageBus->dispatch(
                 new GenerateReportCommand($id),
             );
