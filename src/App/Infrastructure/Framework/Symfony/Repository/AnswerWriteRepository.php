@@ -4,6 +4,7 @@ namespace App\Infrastructure\Framework\Symfony\Repository;
 
 
 use App\Domain\Model\Survey\Answer;
+use App\Domain\Repository\AnswerWriteRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Answer[]    findAll()
  * @method Answer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AnswerWriteRepository extends ServiceEntityRepository
+class AnswerWriteRepository extends ServiceEntityRepository implements AnswerWriteRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

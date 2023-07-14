@@ -90,6 +90,9 @@ class SurveyController extends AbstractController
 
     private function getFormErrorsAsArray(FormInterface $form): array
     {
+        if ($form === null) {
+            return [];
+        }
         $errors = $form->getErrors(true, true);
         $details = [];
         foreach ($errors as $error) {

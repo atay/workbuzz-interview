@@ -2,7 +2,7 @@
 
 namespace App\Domain\Repository;
 
-interface SurveyRepositoryInterface
+interface AnswerRepositoryInterface
 {
     public function find($id, $lockMode = null, $lockVersion = null);
 }

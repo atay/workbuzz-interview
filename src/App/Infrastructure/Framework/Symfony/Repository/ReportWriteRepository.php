@@ -4,6 +4,7 @@ namespace App\Infrastructure\Framework\Symfony\Repository;
 
 
 use App\Domain\Model\Survey\Report;
+use App\Domain\Repository\ReportWriteRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Report[]    findAll()
  * @method Report[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ReportWriteRepository extends ServiceEntityRepository
+class ReportWriteRepository extends ServiceEntityRepository implements ReportWriteRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
