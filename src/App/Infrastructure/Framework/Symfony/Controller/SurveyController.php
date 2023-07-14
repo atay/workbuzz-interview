@@ -163,6 +163,7 @@ class SurveyController extends AbstractController
             if ($previousException instanceof \DomainException) {
                 return $this->json(['error' => $previousException->getMessage()], 400);
             }
+            throw $e;
         }
 
         return $this->json(SurveyDto::fromSurvey($survey));
