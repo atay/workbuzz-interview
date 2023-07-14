@@ -22,7 +22,7 @@ class SurveyService
     ) {
     }
 
-    public function createSurvey(UuidInterface $id, string $name, string $reportEmail): Survey
+    public function saveSurvey(UuidInterface $id, string $name, string $reportEmail): Survey
     {
         $survey = new Survey();
         $survey->setStatus(Survey::STATUS_NEW);

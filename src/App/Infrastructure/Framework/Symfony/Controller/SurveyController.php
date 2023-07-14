@@ -128,7 +128,11 @@ class SurveyController extends AbstractController
             return $this->json(['error' => 'Survey not found'], 404);
         }
 
-        $this->denyAccessUnlessGranted(SurveyVoter::DELETE, $survey);
+        try {
+            $this->denyAccessUnlessGranted(SurveyVoter::DELETE, $survey);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], 403);
+        }
 
         $this->messageBus->dispatch(
             new DeleteSurveyCommand($survey->getId()),

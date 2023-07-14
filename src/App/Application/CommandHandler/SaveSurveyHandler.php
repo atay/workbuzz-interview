@@ -5,7 +5,6 @@ namespace App\Application\CommandHandler;
 use App\Domain\Command\SaveSurveyCommand;
 use App\Domain\Model\Survey\Survey;
 use App\Domain\Service\SurveyService;
-use Ramsey\Uuid\Uuid;
 
 class SaveSurveyHandler
 {
@@ -16,7 +15,7 @@ class SaveSurveyHandler
 
     public function __invoke(SaveSurveyCommand $command): Survey
     {
-        return $this->surveyService->createSurvey(
+        return $this->surveyService->saveSurvey(
             $command->getId(),
             $command->getName(),
             $command->getReportEmail(),
